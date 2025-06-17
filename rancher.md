@@ -1,6 +1,14 @@
 ## HƯỚNG DẪN CÀI RANCHER
 
-## 1.iNSTALL DOCKER
+link tham khảo:
+
+https://docs.docker.com/engine/install/ubuntu/
+
+https://hub.docker.com/r/rancher/rancher/tags
+
+https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/rancher-on-a-single-node-with-docker
+
+## 1.INSTALL DOCKER
 
 1. Set up Docker's apt repository
 
@@ -65,7 +73,7 @@ rm -rf /opt/rancher
 ```
 docker logs  436b7e911463  2>&1 | grep "Bootstrap Password:"
 ```
-436b7e911463 là container id chạy rancher, tìm qua lệnh docker ps, lấy dc pass đêm qua giao diện đổi pass lad được
+436b7e911463 là container id chạy rancher, tìm qua lệnh docker ps, lấy được pass đem qua giao diện đổi pass
 
 2. ADD CỤM K8S
 ![image](https://github.com/user-attachments/assets/d3cd4ab4-341f-49d9-8ad4-08b21b0e048b)
