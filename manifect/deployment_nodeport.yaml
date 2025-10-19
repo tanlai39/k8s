@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080    # có the de trong K8s tự chọn
+
+## Tóm tắt diễn giải của bạn (chuẩn rồi)
+
+Deployment nginx-deploy
+Tạo ra 3 Pod, mỗi Pod có 1 container chạy nginx mở port 80.
+Dùng label app: nginx (ở dòng 11) để biết Pod nào là “con” của nó.
+Khi Deployment tạo Pod, nó sẽ gắn label app: nginx (ở dòng 15).
+Nếu label ở dòng 15 khác với dòng 11 → Pod vẫn được tạo, nhưng không được ReplicaSet/Deployment quản lý (nghĩa là chết thì không tự phục hồi).
+nhản dòng 6 chỉ để “đặt nhãn” cho chính Deployment (nên giữ giống để dễ đọc).
+18) chỉ là tên container, không liên quan đến label/selector.
