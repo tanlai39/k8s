@@ -33,7 +33,7 @@ spec:
     targetPort: 80
     nodePort: 30080    # có the de trong K8s tự chọn
 
-Tóm tắt diễn giải của bạn (chuẩn rồi)
+Tóm tắt diễn giải
 
 Deployment nginx-deploy
 Tạo ra 3 Pod, mỗi Pod có 1 container chạy nginx mở port 80.
@@ -58,3 +58,30 @@ NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
 kubernetes      ClusterIP   10.96.0.1      <none>        443/TCP        52d
 nginx-service   NodePort    10.99.93.158   <none>        80:30080/TCP   2m23s
 ```
+net 192.168.5 là do CNI calico cấp
+
+
+
+từ ngoài cluster truy cập đến 1 trong 3 node worker trên port 80 sẽ được kube-proxy bắt gói
+kube-proxy đã cài sẵn iptables rule sẽ chuyển hướng nội bộ (DNAT NodeIP:30080) thành ClusterIP:80
+kube-proxy tiếp tục xử lý ClusterIP DNAT cluster IP thành Pod IP
+Calico định tuyến gói tin đến đúng Node
+cần có 1 cơ chế để tự động chọn 1 trong 3 node worker đó là load balance or HA Proxy or Ingress
+Ở đây dùng nodeport + Ha proxy
+trên Haproxy bổ sung cấp hình sau vào file config
+Load balance NodePort service nginx
+frontend nginx-frontend
+    bind *:443 ssl crt /etc/haproxy/certs/nginx.pem
+    mode http
+    option httplog
+    default_backend nginx-backend
+
+backend nginx-backend
+    mode http
+    balance roundrobin
+    option httpchk GET /
+    server worker-01 10.0.0.11:30080 check
+    server worker-02 10.0.0.12:30080 check
+    server worker-03 10.0.0.13:30080 check
+file nginx.pem gồm nội dung fullchain và privkey. cấp quyền chmod 600
+
