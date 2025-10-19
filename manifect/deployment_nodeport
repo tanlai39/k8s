@@ -69,7 +69,9 @@ Calico định tuyến gói tin đến đúng Node
 cần có 1 cơ chế để tự động chọn 1 trong 3 node worker đó là load balance or HA Proxy or Ingress
 Ở đây dùng nodeport + Ha proxy
 trên Haproxy bổ sung cấp hình sau vào file config
+
 Load balance NodePort service nginx
+
 frontend nginx-frontend
     bind *:443 ssl crt /etc/haproxy/certs/nginx.pem
     mode http
