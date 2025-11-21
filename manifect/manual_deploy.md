@@ -210,3 +210,69 @@ sudo cp ~/cluster-certs/etcd/ca.* /etc/kubernetes/pki/etcd/
 kubectl get nodes -o wide
 kubectl get pods -A
 ```
+
+## 9 Cài INGRESS
+
+deploy metallb:
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/manifests/metallb-native.yamlt pods -A
+```
+
+```
+vi metallb-config.yaml
+```
+
+```
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 10.0.0.200-10.0.0.249  # Dải IP được chọn
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: l2-advertisement
+  namespace: metallb-system
+spec: {}
+```
+
+```
+kubectl apply -f metallb-config.yaml
+```
+
+cai Ingress Controller: dung helm
+
+B1: caif helm
+```
+sudo snap install helm --classic
+```
+B2: Setup NGINX ingress by Helm
+```
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+```
+## KIỂM TRA INGRESS
+
+```
+root@master-01:~# kubectl get pods -n ingress-nginx
+NAME                                        READY   STATUS    RESTARTS   AGE
+ingress-nginx-controller-645b679d5c-5vqr6   1/1     Running   0          3m51s
+```
+
+```
+root@master-01:~# kubectl get ingressclass
+NAME    CONTROLLER             PARAMETERS   AGE
+nginx   k8s.io/ingress-nginx   <none>       3m15s
+```
+
+```
+root@master-01:~# kubectl get svc -n ingress-nginx
+NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx-controller             LoadBalancer   10.99.236.43   10.0.0.200    80:32491/TCP,443:31001/TCP   2m36s
+ingress-nginx-controller-admission   ClusterIP      10.97.97.188   <none>        443/TCP                      2m36s
+```
