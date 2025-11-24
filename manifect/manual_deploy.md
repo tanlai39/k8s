@@ -15,7 +15,7 @@
 - Các node kết nối mạng nội bộ với nhau (kết nối bằng IP và FQDN/Hostname)
 - Swap đã tắt hoàn toàn
 - Đồng bộ thời gian (NTP)
-
+- trỏ DNS record tke-k8s về ip master-01
 ```
 rm -rf /etc/netplan/50*
 mv /etc/netplan/99* /etc/netplan/eoh.yaml
@@ -202,6 +202,7 @@ sudo cp ~/cluster-certs/etcd/ca.* /etc/kubernetes/pki/etcd/
 
 > Run join command for worker node
 
+trỏ lại DNS record tke-k8s về lại IP VIP
 ---
 
 ## 8️⃣ Kiểm tra Cluster
