@@ -216,7 +216,7 @@ kubectl get pods -A
 
 deploy metallb:
 ```
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/manifests/metallb-native.yamlt pods -A
+kkubectl apply -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/manifests/metallb-native.yaml
 ```
 
 ```
