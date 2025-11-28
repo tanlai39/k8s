@@ -277,3 +277,124 @@ NAME                                 TYPE           CLUSTER-IP     EXTERNAL-IP  
 ingress-nginx-controller             LoadBalancer   10.99.236.43   10.0.0.200    80:32491/TCP,443:31001/TCP   2m36s
 ingress-nginx-controller-admission   ClusterIP      10.97.97.188   <none>        443/TCP                      2m36s
 ```
+
+## 9 Mount NFS
+
+```
+ wget https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/refs/heads/master/deploy/install-driver.sh
+```
+
+```
+chmod +x install-driver.sh
+./install-driver.sh
+```
+
+kiểm tra
+
+```
+root@master-01:~# kubectl -n kube-system get pods -l app=csi-nfs-controller -o wide
+NAME                                  READY   STATUS    RESTARTS       AGE     IP          NODE        NOMINATED NODE   READINESS GATES
+csi-nfs-controller-6994f688bc-dszlv   5/5     Running   1 (7m4s ago)   7m44s   10.0.0.23   worker-03   <none>           <none>
+root@master-01:~#
+root@master-01:~#
+root@master-01:~# kubectl -n kube-system get pods -l app=csi-nfs-node -o wide
+NAME                 READY   STATUS    RESTARTS   AGE     IP          NODE        NOMINATED NODE   READINESS GATES
+csi-nfs-node-7jc9d   3/3     Running   0          7m55s   10.0.0.22   worker-02   <none>           <none>
+csi-nfs-node-8m8qv   3/3     Running   0          7m55s   10.0.0.12   master-02   <none>           <none>
+csi-nfs-node-bwgvf   3/3     Running   0          7m55s   10.0.0.21   worker-01   <none>           <none>
+csi-nfs-node-c7ff5   3/3     Running   0          7m55s   10.0.0.11   master-01   <none>           <none>
+csi-nfs-node-m8964   3/3     Running   0          7m55s   10.0.0.13   master-03   <none>           <none>
+csi-nfs-node-xc4nr   3/3     Running   0          7m55s   10.0.0.23   worker-03   <none>           <none>
+```
+
+```
+vi sc-nfs.yaml
+```
+
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-csi-sc
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 10.0.0.70     # ví dụ: 10.0.0.70
+  share:  /data_k8s       # ví dụ: /data_k8s
+mountOptions:
+  - nfsvers=4.1
+  - rsize=1048576
+  - wsize=1048576
+  - hard
+  - timeo=600
+  - retrans=2
+reclaimPolicy: Delete        # xóa PVC sẽ xóa thư mục con trên share
+volumeBindingMode: Immediate
+```
+
+```
+vi pvc-pod-test.yaml
+```
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-csi-pvc
+spec:
+  accessModes: ["ReadWriteMany"]          # điểm mạnh của NFS
+  storageClassName: nfs-csi-sc
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-csi-pod
+spec:
+  securityContext:
+    fsGroup: 2000                         # giúp ghi nếu server dùng root_squash
+  containers:
+  - name: app
+    image: busybox:1.36
+    command: ["sh","-c","id; touch /data/ok && echo hello > /data/hello.txt && sleep 3600"]
+    volumeMounts:
+    - name: data
+      mountPath: /data
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: nfs-csi-pvc
+```
+
+
+```
+kubectl apply -f sc-nfs.yaml
+kubectl apply -f pvc-pod-test.yaml
+```
+
+```
+root@master-01:~# kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+pvc-41de37a4-86ec-41c0-99fb-bef2e1db5e2a   5Gi        RWX            Delete           Bound    default/nfs-csi-pvc   nfs-csi-sc     <unset>                          147m
+root@master-01:~#
+root@master-01:~#
+root@master-01:~# kubectl get pvc
+NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+nfs-csi-pvc   Bound    pvc-41de37a4-86ec-41c0-99fb-bef2e1db5e2a   5Gi        RWX            nfs-csi-sc     <unset>                 147m
+root@master-01:~#
+root@master-01:~#
+root@master-01:~#
+root@master-01:~# kubectl get pod
+NAME          READY   STATUS    RESTARTS      AGE
+nfs-csi-pod   1/1     Running   2 (27m ago)   148m
+root@master-01:~#
+```
+
+
+
+
+
+
+
+
