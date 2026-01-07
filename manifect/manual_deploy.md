@@ -18,7 +18,7 @@
 - trỏ DNS record tke-k8s về ip master-01
 ```
 rm -rf /etc/netplan/50*
-mv /etc/netplan/99* /etc/netplan/eoh.yaml
+mv /etc/netplan/99* /etc/netplan/k8s.yaml
 sudo systemctl restart systemd-resolved
 sudo systemctl enable systemd-resolved
 sudo ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
