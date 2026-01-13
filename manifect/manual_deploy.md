@@ -329,20 +329,14 @@ vi sc-nfs.yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: nfs-csi-sc
+  name: nfs-csi
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 10.0.0.70     # ví dụ: 10.0.0.70
-  share:  /data_k8s       # ví dụ: /data_k8s
-mountOptions:
-  - nfsvers=4.1
-  - rsize=1048576
-  - wsize=1048576
-  - hard
-  - timeo=600
-  - retrans=2
-reclaimPolicy: Delete        # xóa PVC sẽ xóa thư mục con trên share
+  server: 10.0.0.70
+  share: /data_k8s
+reclaimPolicy: Retain
 volumeBindingMode: Immediate
+allowVolumeExpansion: true
 ```
 
 ```
@@ -350,35 +344,17 @@ vi pvc-pod-test.yaml
 ```
 
 ```
-apiVersion: v1
+aapiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nfs-csi-pvc
+  name: pvc-nfs-csi
 spec:
-  accessModes: ["ReadWriteMany"]          # điểm mạnh của NFS
-  storageClassName: nfs-csi-sc
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-csi
   resources:
     requests:
-      storage: 5Gi
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nfs-csi-pod
-spec:
-  securityContext:
-    fsGroup: 2000                         # giúp ghi nếu server dùng root_squash
-  containers:
-  - name: app
-    image: busybox:1.36
-    command: ["sh","-c","id; touch /data/ok && echo hello > /data/hello.txt && sleep 3600"]
-    volumeMounts:
-    - name: data
-      mountPath: /data
-  volumes:
-  - name: data
-    persistentVolumeClaim:
-      claimName: nfs-csi-pvc
+      storage: 10Gi
 ```
 
 
