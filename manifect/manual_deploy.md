@@ -299,6 +299,10 @@ chmod +x install-driver.sh
 
 INSTALL NFS CLINET TRÊN CÁC NODE K8S
 
+```
+install nfs-common
+```
+
 kiểm tra
 
 ```
