@@ -282,7 +282,12 @@ ingress-nginx-controller-admission   ClusterIP      10.97.97.188   <none>       
 ```
 
 ## 9 Mount NFS
+CÁCH 1: theo link này
+```
+https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/docs/install-csi-driver-v4.12.1.md
+```
 
+CÁCH 2:
 ```
  wget https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/refs/heads/master/deploy/install-driver.sh
 ```
@@ -291,6 +296,8 @@ ingress-nginx-controller-admission   ClusterIP      10.97.97.188   <none>       
 chmod +x install-driver.sh
 ./install-driver.sh
 ```
+
+INSTALL NFS CLINET TRÊN CÁC NODE K8S
 
 kiểm tra
 
