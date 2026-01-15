@@ -68,7 +68,8 @@ kube-proxy tiếp tục xử lý ClusterIP DNAT cluster IP thành Pod IP
 Calico định tuyến gói tin đến đúng Node
 cần có 1 cơ chế để tự động chọn 1 trong 3 node worker đó là load balance or HA Proxy or Ingress
 Ở đây dùng nodeport + Ha proxy
-NODEPORT + GIẢI PHÁP HA PROXY Ỏ LOAD BALANCE CHỈ LÀ LOAD BALANCE LAYER 4 NÊN NẾU MUỐN CHẠY NHIỀU WEB PHẢI TẠO NHIỀU LOAD BALANCE > PHỨC TẠP, KO GIỐNG NHƯ INGRESS LÀ LOAD BALANCE LAYER 7 SẼ DỄ DÀN TRIỂN KHAI HIỀU WEB MA CHỈ CẦN DÙNG 1 LOAD BALANCE
+NODEPORT + GIẢI PHÁP HA PROXY Ỏ LOAD BALANCE CHỈ LÀ LOAD BALANCE LAYER 4 NÊN NẾU MUỐN CHẠY NHIỀU WEB PHẢI TẠO NHIỀU LOAD BALANCE > PHỨC TẠP
+KO GIỐNG NHƯ INGRESS LÀ LOAD BALANCE LAYER 7 SẼ DỄ DÀN TRIỂN KHAI HIỀU WEB MA CHỈ CẦN DÙNG 1 LOAD BALANCE
 
 trên Haproxy bổ sung cấp hình sau vào file config
 
