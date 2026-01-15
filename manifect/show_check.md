@@ -122,7 +122,11 @@ Events:
   Normal  Sync    9m13s (x2 over 10m)  nginx-ingress-controller  Scheduled for sync
 ```
 
+# Lệnh scale deployment
 
+```
+kubectl scale deployment quangpv-web --replicas=2
+```
 
 
 
