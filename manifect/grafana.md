@@ -1,3 +1,4 @@
+```
   149  rm -rf prometheus/
   150  cd /home/sysadmin/kubernetes_installation/
   151  mkdir prometheus
@@ -185,9 +186,12 @@
   333  helm upgrade prometheus-grafana-stack ./   -n monitoring   -f values-prometheus.yaml
   334  history
 root@cicd:~#
+```
 
 ```
 vi values-prometheus.yaml
+```
+
 ```
 grafana:
   enabled: true
@@ -239,3 +243,4 @@ alertmanager:
   alertmanagerSpec:
     externalUrl: https://alertmanager.tanlv.io.vn
     routePrefix: /
+```
