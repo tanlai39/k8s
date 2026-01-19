@@ -1,3 +1,4 @@
+https://viblo.asia/p/k8s-phan-8-monitoring-tren-kubernetes-cluster-dung-prometheus-va-grafana-Qbq5QRkEKD8
 ```
   149  rm -rf prometheus/
   150  cd /home/sysadmin/kubernetes_installation/
