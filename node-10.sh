@@ -111,7 +111,7 @@ EOF
 
   # ---- JOIN ----
   echo "[INFO] Running kubeadm join..."
-  #bash /root/cluster-certs/node-join-cmd.sh
+  bash /root/cluster-certs/node-join-cmd.sh
 
   echo "[INFO] kubeadm join finished"
 
@@ -119,5 +119,6 @@ EOF
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
+
 
 
