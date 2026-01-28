@@ -68,12 +68,6 @@ fi
 ###############################################################################
 if [ ! -f /var/lib/k8s/step2.done ]; then
   echo "[INFO] STEP 2 running..."
-
-  echo "[INFO] Waiting for containerd socket..."
-  for i in {1..30}; do
-    [ -S /var/run/containerd/containerd.sock ] && break
-    sleep 2
-  done
   
   mkdir -p /root/.ssh
   chmod 700 /root/.ssh
@@ -105,4 +99,5 @@ EOF
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
+
 
