@@ -95,14 +95,6 @@ EOF
     sleep 2
   done
 
-  # ---- WAIT KUBELET ----
-  echo "[INFO] Waiting for kubelet service..."
-  systemctl restart kubelet
-  for i in {1..30}; do
-    systemctl is-active kubelet >/dev/null 2>&1 && break
-    sleep 2
-  done
-
   # ---- COPY JOIN FILE ----
   rm -rf /root/cluster-certs
   mkdir -p /root/cluster-certs
@@ -127,3 +119,4 @@ EOF
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
+
