@@ -21,7 +21,7 @@ for i in {1..30}; do
 done
 
 # ---------------- TIME ----------------
-apt update -y
+#apt update -y
 apt install -y chrony
 systemctl enable --now chrony
 
