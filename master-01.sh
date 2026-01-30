@@ -6,7 +6,26 @@ exec > >(tee -a "$LOG") 2>&1
 
 echo "[INFO] build-k8s.sh started at $(date)"
 mkdir -p /var/lib/k8s
+rm -rf /etc/netplan/*
 
+cat > /etc/netplan/k8s.yaml <<'EOF'
+network:
+  version: 2
+  ethernets:
+    ens192:
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - 10.0.0.111/24
+      routes:
+        - to: default
+          via: 10.0.0.1
+      nameservers:
+        search:
+          - k8s.local
+        addresses:
+          - 10.0.0.250
+EOF
 systemctl enable --now systemd-resolved
 ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
 
@@ -21,7 +40,8 @@ for i in {1..30}; do
 done
 
 # ---------------- TIME ----------------
-#apt update -y
+apt update -y
+apt upgrade -y
 apt install -y chrony
 systemctl enable --now chrony
 
