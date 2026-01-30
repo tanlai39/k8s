@@ -21,8 +21,8 @@ for i in {1..30}; do
 done
 
 # ---------------- TIME ----------------
-apt-get update -y
-apt-get install -y chrony
+apt update -y
+apt install -y chrony
 systemctl enable --now chrony
 
 cat > /etc/chrony/chrony.conf <<'EOF'
@@ -76,8 +76,8 @@ EOF
   echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.34/deb/ /" \
     > /etc/apt/sources.list.d/kubernetes.list
 
-  apt-get update
-  apt-get install -y kubelet kubeadm kubectl
+  apt update
+  apt install -y kubelet kubeadm kubectl
   apt-mark hold kubelet kubeadm kubectl
 
   touch /var/lib/k8s/step1.done
