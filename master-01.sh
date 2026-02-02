@@ -43,6 +43,7 @@ for i in {1..30}; do
 done
 
 # ---------------- TIME ----------------
+sleep 120
 apt update -y
 apt upgrade -y
 apt install -y chrony
