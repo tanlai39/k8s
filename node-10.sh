@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 LOG=/var/log/build-k8s.log
 exec > >(tee -a "$LOG") 2>&1
@@ -7,10 +6,58 @@ exec > >(tee -a "$LOG") 2>&1
 echo "[INFO] build-k8s.sh started at $(date)"
 
 mkdir -p /var/lib/k8s
+rm -rf /etc/netplan/*
 
-###############################################################################
-# STEP 1 – INSTALL CONTAINERD + K8S
-###############################################################################
+cat > /etc/netplan/k8s.yaml <<'EOF'
+network:
+  version: 2
+  ethernets:
+    ens192:
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - 10.0.0.211/24
+      routes:
+        - to: default
+          via: 10.0.0.1
+      nameservers:
+        search:
+          - k8s.local
+        addresses:
+          - 10.0.0.250
+EOF
+
+systemctl enable --now systemd-resolved
+ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+hostnamectl set-hostname node-10.k8s.local
+echo "127.0.1.1 node-10.k8s.local" >> /etc/hosts
+timedatectl set-timezone Asia/Ho_Chi_Minh
+
+echo "[INFO] Waiting for network..."
+for i in {1..30}; do
+  ping -c1 -W1 8.8.8.8 >/dev/null 2>&1 && break
+  sleep 2
+done
+
+# ---------------- TIME ----------------
+echo "[INFO] network OK, Waitting 2 phut lam tiep"
+sleep 120
+apt update -y
+apt upgrade -y
+apt-get install -y chrony
+systemctl enable --now chrony
+
+cat > /etc/chrony/chrony.conf <<'EOF'
+server 0.asia.pool.ntp.org iburst
+driftfile /var/lib/chrony/chrony.drift
+makestep 1 3
+rtcsync
+EOF
+
+systemctl restart chrony
+
+# ================= STEP 1 =================
 if [ ! -f /var/lib/k8s/step1.done ]; then
   echo "[INFO] STEP 1 running..."
 
@@ -30,10 +77,8 @@ EOF
 
   wget -q https://github.com/containerd/containerd/releases/download/v2.1.4/containerd-2.1.4-linux-amd64.tar.gz -P /tmp
   tar -C /usr/local -xzf /tmp/containerd-2.1.4-linux-amd64.tar.gz
-
   wget -q https://raw.githubusercontent.com/containerd/containerd/main/containerd.service \
     -O /etc/systemd/system/containerd.service
-
   systemctl daemon-reload
   systemctl enable --now containerd
 
@@ -51,7 +96,6 @@ EOF
 
   curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key \
     | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
   echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.34/deb/ /" \
     > /etc/apt/sources.list.d/kubernetes.list
 
@@ -60,7 +104,6 @@ EOF
   apt-mark hold kubelet kubeadm kubectl
 
   touch /var/lib/k8s/step1.done
-  reboot
 fi
 
 ###############################################################################
@@ -119,6 +162,7 @@ EOF
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
+
 
 
 
