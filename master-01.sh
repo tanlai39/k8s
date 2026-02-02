@@ -43,6 +43,7 @@ for i in {1..30}; do
 done
 
 # ---------------- TIME ----------------
+echo "[INFO] network OK, Waitting 2 phut lam tiep"
 sleep 120
 apt update -y
 apt upgrade -y
