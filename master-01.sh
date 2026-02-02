@@ -26,6 +26,9 @@ network:
         addresses:
           - 10.0.0.250
 EOF
+
+netplan apply
+
 systemctl enable --now systemd-resolved
 ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
 
