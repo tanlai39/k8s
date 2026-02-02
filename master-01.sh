@@ -106,7 +106,6 @@ EOF
   apt-mark hold kubelet kubeadm kubectl
 
   touch /var/lib/k8s/step1.done
-  reboot
 fi
 
 # ================= STEP 2 =================
