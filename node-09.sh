@@ -159,6 +159,7 @@ EOF
   echo "[INFO] kubeadm join finished"
 
   touch /var/lib/k8s/step2.done
+  touch /var/lib/k8s/build-k8s.done
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
