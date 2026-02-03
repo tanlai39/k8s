@@ -42,7 +42,7 @@ done
 
 # ---------------- TIME ----------------
 echo "[INFO] network OK, Waitting 2 phut lam tiep"
-sleep 120
+sleep 60
 apt update -y
 apt upgrade -y
 apt-get install -y chrony
