@@ -178,6 +178,7 @@ if [ ! -f /var/lib/k8s/step2.done ]; then
    chown -R ubuntu:ubuntu /tmp/cluster-certs || true
 
    touch /var/lib/k8s/step2.done
+   touch /var/lib/k8s/build-k8s.done
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
