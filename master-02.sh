@@ -140,6 +140,7 @@ EOF
   sudo bash /root/cluster-certs/master-join-cmd.sh
 
   touch /var/lib/k8s/step2.done
+  touch /var/lib/k8s/build-k8s.done
 fi
 
 echo "[INFO] build-k8s.sh finished at $(date)"
