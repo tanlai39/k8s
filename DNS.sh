@@ -198,5 +198,5 @@ named-checkzone k8s.local /etc/bind/k8s.local
 named-checkzone tanlv.io.vn /etc/bind/tanlv.io.vn
 systemctl restart named
 systemctl status named
-
+touch /var/lib/k8s/build-dns.done
 echo "[INFO] build-dns.sh finished at $(date)"
