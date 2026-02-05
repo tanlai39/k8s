@@ -193,5 +193,25 @@ named-checkzone k8s.local /etc/bind/k8s.local
 named-checkzone tanlv.io.vn /etc/bind/tanlv.io.vn
 systemctl restart named
 systemctl status named
+
+echo "[INFO] đổi lại DNS"
+cat > /etc/netplan/k8s.yaml <<'EOF'
+network:
+  version: 2
+  ethernets:
+    ens192:
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - 10.0.0.250/24
+      routes:
+        - to: default
+          via: 10.0.0.1
+      nameservers:
+        search:
+          - k8s.local
+        addresses:
+          - 10.0.0.250
+EOF
 touch /var/lib/k8s/build-dns.done
 echo "[INFO] build-dns.sh finished at $(date)"
