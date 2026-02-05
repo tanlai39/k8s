@@ -134,7 +134,7 @@ $TTL 86400
         604800      ;Expire
         86400       ;Minimum TTL
 )
-        IN  NS      dns.openstack.local.
+        IN  NS      dns.k8s.local.
         IN  A       10.0.0.250
 
 dns              IN  A       10.0.0.250
@@ -144,9 +144,7 @@ master03         IN  A       10.0.0.13
 worker01         IN  A       10.0.0.21
 worker02         IN  A       10.0.0.22
 worker03         IN  A       10.0.0.23
-haproxy          IN  A       10.0.0.30
-rancher          IN  A       10.0.0.40
-tke-k8s          IN  A       10.0.0.30
+tke-k8s          IN  A       10.0.0.11
 EOF
 
 cat > /etc/bind/tanlv.io.vn <<'EOF'
@@ -163,8 +161,7 @@ $TTL 86400
         IN  NS      dns.tanlv.io.vn.
         IN  A       10.0.0.250
 
-tke-k8s                 IN  A       10.0.0.30
-rancher                 IN  A       10.0.0.40
+tke-k8s                 IN  A       10.0.0.11
 dns                     IN  A       10.0.0.250
 EOF
 
@@ -187,8 +184,6 @@ $TTL 86400
 21       IN  PTR     worker01.k8s.local.
 22       IN  PTR     worker02.k8s.local.
 23       IN  PTR     worker03.k8s.local.
-30       IN  PTR     haproxy.k8s.local.
-40       IN  PTR     rancher.k8s.local.
 EOF
 
 
