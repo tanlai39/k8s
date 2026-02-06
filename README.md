@@ -1,3 +1,4 @@
+```
 domain local: tanlv.local
 domain public: tanlv.io.vn
 subnet: 10.0.0.0/24
@@ -11,4 +12,4 @@ node-03.tanlv.local	          10.0.0.23
 dns.tanlv.local	              10.0.0.250
 tanlv-tke.tanlv.local	        10.0.0.11
 tanlv-tke.tanlv.io.vn	        10.0.0.11
-
+```
