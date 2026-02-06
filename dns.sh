@@ -213,5 +213,5 @@ network:
         addresses:
           - 10.0.0.250
 EOF
-touch /var/lib/k8s/build-dns.done
+touch /var/lib/dns/build-dns.done
 echo "[INFO] build-dns.sh finished at $(date)"
