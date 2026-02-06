@@ -8,7 +8,7 @@ echo "[INFO] build-dns.sh started at $(date)"
 mkdir -p /var/lib/dns
 rm -rf /etc/netplan/*
 
-cat > /etc/netplan/k8s.yaml <<'EOF'
+cat > /etc/netplan/tanlv.yaml <<'EOF'
 network:
   version: 2
   ethernets:
@@ -22,7 +22,7 @@ network:
           via: 10.0.0.1
       nameservers:
         search:
-          - k8s.local
+          - tanlv.local
         addresses:
           - 8.8.8.8
 EOF
@@ -30,8 +30,8 @@ EOF
 systemctl enable --now systemd-resolved
 ln -sf /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
 
-hostnamectl set-hostname dns.k8s.local
-echo "127.0.1.1 dns.k8s.local" >> /etc/hosts
+hostnamectl set-hostname dns.tanlv.local
+echo "127.0.1.1 dns.tanlv.local" >> /etc/hosts
 timedatectl set-timezone Asia/Ho_Chi_Minh
 
 echo "[INFO] Waiting for network..."
@@ -97,9 +97,9 @@ options {
 EOF
 
 cat > /etc/bind/named.conf.internal-zones <<'EOF'
-zone "k8s.local" IN {
+zone "tanlv.local" IN {
         type primary;
-        file "/etc/bind/k8s.local";
+        file "/etc/bind/tanlv.local";
         allow-update { none; };
 };
 zone "0.0.10.in-addr.arpa" IN {
@@ -123,9 +123,9 @@ cat > /etc/default/named <<'EOF'
 OPTIONS="-u bind -4"
 EOF
 
-cat > /etc/bind/k8s.local <<'EOF'
+cat > /etc/bind/tanlv.local <<'EOF'
 $TTL 86400
-@   IN  SOA     dns.k8s.local. root.k8s.local. (
+@   IN  SOA     dns.tanlv.local. root.tanlv.local. (
         ;; any numerical values are OK for serial number
         ;; recommended : [YYYYMMDDnn] (update date + number)
         2024042901  ;Serial
@@ -134,17 +134,17 @@ $TTL 86400
         604800      ;Expire
         86400       ;Minimum TTL
 )
-        IN  NS      dns.k8s.local.
+        IN  NS      dns.tanlv.local.
         IN  A       10.0.0.250
 
-dns              IN  A       10.0.0.250
-master01         IN  A       10.0.0.11
-master02         IN  A       10.0.0.12
-master03         IN  A       10.0.0.13
-worker01         IN  A       10.0.0.21
-worker02         IN  A       10.0.0.22
-worker03         IN  A       10.0.0.23
-tke-k8s          IN  A       10.0.0.11
+dns                      IN  A       10.0.0.250
+control-plane-01         IN  A       10.0.0.11
+control-plane-02         IN  A       10.0.0.12
+control-plane-03         IN  A       10.0.0.13
+node-01                  IN  A       10.0.0.21
+node-02                  IN  A       10.0.0.22
+node-03                  IN  A       10.0.0.23
+tanlv-tke                IN  A       10.0.0.11
 EOF
 
 cat > /etc/bind/tanlv.io.vn <<'EOF'
@@ -161,13 +161,13 @@ $TTL 86400
         IN  NS      dns.tanlv.io.vn.
         IN  A       10.0.0.250
 
-tke-k8s                 IN  A       10.0.0.11
-dns                     IN  A       10.0.0.250
+tanlv-tke                 IN  A       10.0.0.11
+dns                       IN  A       10.0.0.250
 EOF
 
 cat > /etc/bind/0.0.10.db <<'EOF'
 $TTL 86400
-@   IN  SOA     dns.k8s.local. root.k8s.local. (
+@   IN  SOA     dns.tanlv.local. root.tanlv.local. (
         2024042901  ;Serial
         3600        ;Refresh
         1800        ;Retry
@@ -175,27 +175,27 @@ $TTL 86400
         86400       ;Minimum TTL
 )
         ;; define Name Server
-        IN  NS      dns.k8s.local.
+        IN  NS      dns.tanlv.local.
 
-250      IN  PTR     dns.k8s.local.
-11       IN  PTR     master01.k8s.local.
-12       IN  PTR     master02.k8s.local.
-13       IN  PTR     master03.k8s.local.
-21       IN  PTR     worker01.k8s.local.
-22       IN  PTR     worker02.k8s.local.
-23       IN  PTR     worker03.k8s.local.
+250      IN  PTR     dns.tanlv.local.
+11       IN  PTR     control-plane-01.tanlv.local.
+12       IN  PTR     control-plane-02.tanlv.local.
+13       IN  PTR     control-plane-03.tanlv.local.
+21       IN  PTR     node-01.tanlv.local.
+22       IN  PTR     node-02.tanlv.local.
+23       IN  PTR     node-03.tanlv.local.
 EOF
 
 
 named-checkconf
 named-checkzone 0.0.10.in-addr.arpa /etc/bind/0.0.10.db
-named-checkzone k8s.local /etc/bind/k8s.local
+named-checkzone tanlv.local /etc/bind/tanlv.local
 named-checkzone tanlv.io.vn /etc/bind/tanlv.io.vn
 systemctl restart named
 systemctl status named
 
 echo "[INFO] đổi lại DNS"
-cat > /etc/netplan/k8s.yaml <<'EOF'
+cat > /etc/netplan/tanlv.yaml <<'EOF'
 network:
   version: 2
   ethernets:
@@ -209,7 +209,7 @@ network:
           via: 10.0.0.1
       nameservers:
         search:
-          - k8s.local
+          - tanlv.local
         addresses:
           - 10.0.0.250
 EOF
