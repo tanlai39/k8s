@@ -2,6 +2,8 @@
 
 link tham khảo:
 
+resource yều cầu 4 CPU 4G RAM
+
 https://docs.docker.com/engine/install/ubuntu/
 
 https://hub.docker.com/r/rancher/rancher/tags
@@ -40,7 +42,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 docker pull rancher/rancher:latest
 ```
 
-tạo thư mục /opt/certs chứa 3 file cert.pem (file fullchain)  và key.pem (file privatekey)và cacerts.pem (file chain)
+tạo thư mục /opt/certs chứa 3 file cert.pem (file fullchain)  và key.pem (file privatekey)và cacerts.pem (file chain)( fullchain bỏ block đầu )
 
 ```
 docker run -d --restart=unless-stopped \
